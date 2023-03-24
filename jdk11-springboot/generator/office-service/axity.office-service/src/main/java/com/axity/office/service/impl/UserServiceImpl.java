@@ -15,6 +15,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.axity.office.commons.dto.RoleDto;
 import com.axity.office.commons.dto.UserDto;
 import com.axity.office.commons.enums.ErrorCode;
 import com.axity.office.commons.exception.BusinessException;
@@ -118,6 +119,19 @@ public class UserServiceImpl implements UserService
       return genericResponse;
     }
 
+    var rolesSelected = dto.getRoles();
+
+    for (RoleDto role : rolesSelected) {
+      if (!existRole(role.getId())) {
+        GenericResponseDto<UserDto> genericResponse = new GenericResponseDto<>();
+
+        genericResponse
+            .setHeader(new HeaderDto(ErrorCode.ROLE_NOT_FOUND.getCode(), "Error. Role selected does not exist."));
+
+        return genericResponse;
+      }
+    }
+
     UserDO entity = new UserDO();
     this.mapper.map(dto, entity);
     entity.setId(null);
@@ -129,6 +143,15 @@ public class UserServiceImpl implements UserService
     this.userPersistence.save(entity);
     dto.setId(entity.getId());
     return new GenericResponseDto<>(dto);
+  }
+
+    /**
+   * 
+   * @param id
+   */
+  @Override
+  public boolean existRole(Integer id) {
+    return this.rolePersistence.findById(id).isPresent();
   }
 
   /**
