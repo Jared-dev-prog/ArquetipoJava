@@ -21,6 +21,7 @@ import com.axity.office.commons.exception.BusinessException;
 import com.axity.office.commons.request.MessageDto;
 import com.axity.office.commons.request.PaginatedRequestDto;
 import com.axity.office.commons.response.GenericResponseDto;
+import com.axity.office.commons.response.HeaderDto;
 import com.axity.office.commons.response.PaginatedResponseDto;
 import com.axity.office.model.UserDO;
 import com.axity.office.model.QUserDO;
@@ -99,23 +100,54 @@ public class UserServiceImpl implements UserService
   @Override
   public GenericResponseDto<UserDto> create( UserDto dto )
   {
+    if (existUsername(dto.getUsername())) {
+      GenericResponseDto<UserDto> genericResponse = new GenericResponseDto<>();
+
+      genericResponse
+          .setHeader(new HeaderDto(ErrorCode.USERNAME_ALREADY_EXISTS.getCode(), "Error. Username already exist."));
+
+      return genericResponse;
+    }
+
+    if (existEmail(dto.getEmail())) {
+      GenericResponseDto<UserDto> genericResponse = new GenericResponseDto<>();
+
+      genericResponse
+          .setHeader(new HeaderDto(ErrorCode.EMAIL_ALREADY_EXISTS.getCode(), "Error. Email already exist."));
+
+      return genericResponse;
+    }
 
     UserDO entity = new UserDO();
-    this.mapper.map( dto, entity );
+    this.mapper.map(dto, entity);
     entity.setId(null);
-
     var roles = new ArrayList<RoleDO>();
-    entity.setRoles( roles );
-
+    entity.setRoles(roles);
     dto.getRoles().stream().forEach(r -> {
       entity.getRoles().add(this.rolePersistence.findById(r.getId()).get());
     });
-
     this.userPersistence.save(entity);
     dto.setId(entity.getId());
     return new GenericResponseDto<>(dto);
   }
 
+  /**
+   * 
+   * @param email
+   */
+  @Override
+  public boolean existEmail(String email) {
+    return (this.userPersistence.findByEmail(email).isPresent());
+  }
+
+  /**
+   * 
+   * @param username
+   */
+  @Override
+  public boolean existUsername(String username) {
+    return (this.userPersistence.findByUsername(username).isPresent());
+  }
   /**
    * {@inheritDoc}
    */
@@ -135,7 +167,7 @@ public class UserServiceImpl implements UserService
     entity.setEmail( dto.getEmail() );
     entity.setName( dto.getName() );
     entity.setLastName( dto.getLastName() );
-    // TODO: Actualizar entity.Roles (?) 
+
 
     this.userPersistence.save( entity );
 

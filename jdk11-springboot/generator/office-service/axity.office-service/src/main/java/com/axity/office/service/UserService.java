@@ -55,4 +55,19 @@ public interface UserService
    */
   GenericResponseDto<Boolean> delete( Integer id );
 
+  /**
+   * Method to validate if a username already exist
+   * 
+   * @param username
+   * @return
+   */
+  boolean existUsername(String username);
+
+  /**
+   * Method to validate if a username already exist
+   * 
+   * @param email
+   * @return
+   */
+  boolean existEmail(String email);
 }
