@@ -297,4 +297,51 @@ class UserServiceTest
     assertEquals(ErrorCode.ROLE_NOT_FOUND.getCode(), response.getHeader().getCode());
   }
 
+  /**
+   * Test method for validate if roles list is empty
+   * {@link com.axity.office.service.impl.UserServiceImpl#create(com.axity.office.commons.dto.UserDto)}.
+   */
+  @Test
+  void testValidateRolesEmpty() {
+    // Data inicial
+    var list = new ArrayList<RoleDto>();// Roles list empty does not exist in db
+
+    var dto = new UserDto();
+    dto.setUsername("JaredProgrammer");
+    dto.setEmail("jaredprogrammer@axity.com");
+    dto.setName("Jared");
+    dto.setLastName("Trejo");
+    dto.setRoles(list);
+
+    // Llamada
+    var response = this.userService.create(dto);
+
+    // Validación
+    assertNotNull(response);
+    assertEquals(ErrorCode.NOT_ROLE_SELECTED.getCode(), response.getHeader().getCode());
+  }
+
+  /**
+   * Test method for validate if roles list is null
+   * {@link com.axity.office.service.impl.UserServiceImpl#create(com.axity.office.commons.dto.UserDto)}.
+   */
+  @Test
+  void testValidateRolesNull() {
+    // Data inicial
+    var list = new ArrayList<RoleDto>();// Roles list empty does not send to user
+
+    var dto = new UserDto();
+    dto.setUsername("JaredProgrammer");
+    dto.setEmail("jaredprogrammer@axity.com");
+    dto.setName("Jared");
+    dto.setLastName("Trejo");
+
+    // Llamada
+    var response = this.userService.create(dto);
+
+    // Validación
+    assertNotNull(response);
+    assertEquals(ErrorCode.NOT_ROLE_SELECTED.getCode(), response.getHeader().getCode());
+  }
+
 }

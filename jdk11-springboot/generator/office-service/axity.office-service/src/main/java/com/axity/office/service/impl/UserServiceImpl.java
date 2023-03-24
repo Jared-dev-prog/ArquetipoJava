@@ -132,6 +132,24 @@ public class UserServiceImpl implements UserService
       }
     }
 
+    if (dto.getRoles() == null) {
+      GenericResponseDto<UserDto> genericResponse = new GenericResponseDto<>();
+
+      genericResponse
+          .setHeader(new HeaderDto(ErrorCode.NOT_ROLE_SELECTED.getCode(), "Error. You must select at least one rol."));
+
+      return genericResponse;
+    }
+
+    if (isRolesEmpty(dto.getRoles())) {
+      GenericResponseDto<UserDto> genericResponse = new GenericResponseDto<>();
+
+      genericResponse
+          .setHeader(new HeaderDto(ErrorCode.NOT_ROLE_SELECTED.getCode(), "Error. You must select at least one rol."));
+
+      return genericResponse;
+    }
+
     UserDO entity = new UserDO();
     this.mapper.map(dto, entity);
     entity.setId(null);
@@ -145,13 +163,13 @@ public class UserServiceImpl implements UserService
     return new GenericResponseDto<>(dto);
   }
 
-    /**
+  /**
    * 
-   * @param id
+   * @param username
    */
   @Override
-  public boolean existRole(Integer id) {
-    return this.rolePersistence.findById(id).isPresent();
+  public boolean isRolesEmpty(List<RoleDto> roles) {
+    return roles.isEmpty();
   }
 
   /**
@@ -223,6 +241,12 @@ public class UserServiceImpl implements UserService
       dto = this.mapper.map( entity, UserDto.class );
     }
     return dto;
+  }
+
+  @Override
+  public boolean existRole(Integer id) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'existRole'");
   }
 
 }
