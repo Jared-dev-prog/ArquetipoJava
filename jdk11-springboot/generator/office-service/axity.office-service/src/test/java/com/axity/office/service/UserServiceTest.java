@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
+
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -19,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.axity.office.commons.dto.RoleDto;
 import com.axity.office.commons.dto.UserDto;
 import com.axity.office.commons.enums.ErrorCode;
 import com.axity.office.commons.exception.BusinessException;
@@ -80,23 +83,42 @@ class UserServiceTest
     assertNull( user );
   }
 
+    /**
+   * Test method for
+   * @param id
+   * @return Instance of RoleDto
+   */
+    private RoleDto createRole(int id) {
+      var role = new RoleDto();
+      role.setId(id);
+      return role;
+    }
+  /**
+
+  * Test method for create user happy path
   /**
    * Test method for
    * {@link com.axity.office.service.impl.UserServiceImpl#create(com.axity.office.commons.dto.UserDto)}.
    */
   @Test
-  @Disabled("TODO: Actualizar la prueba de acuerdo a la entidad")
   void testCreate()
   {
+    var list = new ArrayList<RoleDto>();
+    list.add( createRole( 1 ) );
+
     var dto = new UserDto();
-    // Crear de acuerdo a la entidad
+    dto.setUsername("JaredProgrammer");
+    dto.setEmail("jaredprogrammer@axity.com");
+    dto.setName("Jared");
+    dto.setLastName("Trejo");
+    dto.setRoles( list );
 
     var response = this.userService.create( dto );
-    assertNotNull( response );
-    assertEquals( 0, response.getHeader().getCode() );
-    assertNotNull( response.getBody() );
 
-    this.userService.delete( dto.getId() );
+    assertNotNull( response );
+    assertEquals( "OK", response.getHeader().getMessage() );
+    assertNotNull(response.getBody());
+    this.userService.delete(dto.getId());
   }
 
   /**

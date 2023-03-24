@@ -1,6 +1,7 @@
 package com.axity.office.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +24,8 @@ import com.axity.office.commons.response.GenericResponseDto;
 import com.axity.office.commons.response.PaginatedResponseDto;
 import com.axity.office.model.UserDO;
 import com.axity.office.model.QUserDO;
+import com.axity.office.model.RoleDO;
+import com.axity.office.persistence.RolePersistence;
 import com.axity.office.persistence.UserPersistence;
 import com.axity.office.service.UserService;
 import com.github.dozermapper.core.Mapper;
@@ -47,6 +51,9 @@ public class UserServiceImpl implements UserService
 
   @Autowired
   private Mapper mapper;
+
+  @Autowired
+  private RolePersistence rolePersistence;
   
   /**
    * {@inheritDoc}
@@ -97,11 +104,16 @@ public class UserServiceImpl implements UserService
     this.mapper.map( dto, entity );
     entity.setId(null);
 
-    this.userPersistence.save( entity );
+    var roles = new ArrayList<RoleDO>();
+    entity.setRoles( roles );
 
+    dto.getRoles().stream().forEach(r -> {
+      entity.getRoles().add(this.rolePersistence.findById(r.getId()).get());
+    });
+
+    this.userPersistence.save(entity);
     dto.setId(entity.getId());
-
-    return new GenericResponseDto<>( dto );
+    return new GenericResponseDto<>(dto);
   }
 
   /**
@@ -157,4 +169,5 @@ public class UserServiceImpl implements UserService
     }
     return dto;
   }
+
 }

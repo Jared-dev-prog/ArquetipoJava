@@ -54,4 +54,5 @@ public interface UserService
    * @return
    */
   GenericResponseDto<Boolean> delete( Integer id );
+
 }
