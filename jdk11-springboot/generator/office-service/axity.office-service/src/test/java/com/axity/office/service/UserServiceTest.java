@@ -125,20 +125,25 @@ class UserServiceTest
    * Method to validate update
    */
   @Test
-  @Disabled("TODO: Actualizar la prueba de acuerdo a la entidad")
   void testUpdate()
   {
-    var user = this.userService.find( 1 ).getBody();
-    // TODO: actualizar de acuerdo a la entidad
+    // Data to update
+    String name = "Alexander";
 
-    var response = this.userService.update( user );
+    // Data inicial
+    int idToUpdate = 1;
+    var user = this.userService.find(idToUpdate).getBody();
+
+    user.setName(name);
+
+    var response = this.userService.update(user);
 
     assertNotNull( response );
-    assertEquals( 0, response.getHeader().getCode() );
+    assertEquals("OK", response.getHeader().getMessage());
     assertTrue( response.getBody() );
-    user = this.userService.find( 1 ).getBody();
 
-    // Verificar que se actualice el valor
+    user = this.userService.find(idToUpdate).getBody();
+    assertEquals(name, user.getName());
   }
 
   /**
