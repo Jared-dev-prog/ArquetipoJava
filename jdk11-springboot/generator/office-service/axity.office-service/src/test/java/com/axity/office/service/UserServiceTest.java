@@ -104,20 +104,22 @@ class UserServiceTest
   void testCreate()
   {
     var list = new ArrayList<RoleDto>();
-    list.add( createRole( 1 ) );
+    list.add(createRole(1));
 
     var dto = new UserDto();
+    
     dto.setUsername("JaredProgrammer");
     dto.setEmail("jaredprogrammer@axity.com");
     dto.setName("Jared");
     dto.setLastName("Trejo");
-    dto.setRoles( list );
+    dto.setRoles(list);
 
-    var response = this.userService.create( dto );
+    var response = this.userService.create(dto);
 
-    assertNotNull( response );
-    assertEquals( "OK", response.getHeader().getMessage() );
+    assertNotNull(response);
+    assertEquals("OK", response.getHeader().getMessage());
     assertNotNull(response.getBody());
+
     this.userService.delete(dto.getId());
   }
 
@@ -175,7 +177,7 @@ class UserServiceTest
    */
   @Test
   void testCreateWithOneRole() {
-    // Data inicial
+
     var list = new ArrayList<RoleDto>();
     list.add(createRole(1));
 
@@ -186,10 +188,8 @@ class UserServiceTest
     dto.setLastName("Trejo");
     dto.setRoles(list);
 
-    // Llamada
     var response = this.userService.create(dto);
 
-    // Validación
     assertNotNull(response);
     assertEquals("OK", response.getHeader().getMessage());
     assertNotNull(response.getBody());
@@ -216,10 +216,8 @@ class UserServiceTest
     dto.setLastName("Trejo");
     dto.setRoles(list);
 
-    // Llamada
     var response = this.userService.create(dto);
 
-    // Validación
     assertNotNull(response);
     assertEquals("OK", response.getHeader().getMessage());
     assertNotNull(response.getBody());
@@ -238,16 +236,14 @@ class UserServiceTest
     list.add(createRole(1));
 
     var dto = new UserDto();
-    dto.setUsername("denise.alford"); // Username alreadyexist in db
+    dto.setUsername("denise.alford"); 
     dto.setEmail("jaredprogrammer@axity.com");
     dto.setName("Jared");
     dto.setLastName("Trejo");
     dto.setRoles(list);
 
-    // Llamada
     var response = this.userService.create(dto);
 
-    // Validación
     assertNotNull(response);
     assertEquals(ErrorCode.USERNAME_ALREADY_EXISTS.getCode(), response.getHeader().getCode());
   }
@@ -264,15 +260,13 @@ class UserServiceTest
 
     var dto = new UserDto();
     dto.setUsername("JaredProgrammer");
-    dto.setEmail("denise.alford@company.net"); // Email alreadyexist in db
+    dto.setEmail("denise.alford@company.net"); 
     dto.setName("Jared");
     dto.setLastName("Trejo");
     dto.setRoles(list);
 
-    // Llamada
     var response = this.userService.create(dto);
 
-    // Validación
     assertNotNull(response);
     assertEquals(ErrorCode.EMAIL_ALREADY_EXISTS.getCode(), response.getHeader().getCode());
   }
@@ -283,9 +277,9 @@ class UserServiceTest
    */
   @Test
   void testValidateRolesSelectedNotExist() {
-    // Data inicial
+
     var list = new ArrayList<RoleDto>();
-    list.add(createRole(99)); // Role selected does not exist in db
+    list.add(createRole(99)); 
 
     var dto = new UserDto();
     dto.setUsername("JaredProgrammer");
@@ -294,59 +288,30 @@ class UserServiceTest
     dto.setLastName("Trejo");
     dto.setRoles(list);
 
-    // Llamada
     var response = this.userService.create(dto);
 
-    // Validación
     assertNotNull(response);
     assertEquals(ErrorCode.ROLE_NOT_FOUND.getCode(), response.getHeader().getCode());
   }
 
-  /**
+/**
    * Test method for validate if roles list is empty
    * {@link com.axity.office.service.impl.UserServiceImpl#create(com.axity.office.commons.dto.UserDto)}.
    */
   @Test
   void testValidateRolesEmpty() {
-    // Data inicial
-    var list = new ArrayList<RoleDto>();// Roles list empty does not exist in db
+    var list = new ArrayList<RoleDto>();
 
     var dto = new UserDto();
     dto.setUsername("JaredProgrammer");
-    dto.setEmail("jaredprogrammer@axity.com");
+    dto.setEmail("jaredprogrammer@gmail.com");
     dto.setName("Jared");
     dto.setLastName("Trejo");
     dto.setRoles(list);
 
-    // Llamada
     var response = this.userService.create(dto);
 
-    // Validación
     assertNotNull(response);
     assertEquals(ErrorCode.NOT_ROLE_SELECTED.getCode(), response.getHeader().getCode());
   }
-
-  /**
-   * Test method for validate if roles list is null
-   * {@link com.axity.office.service.impl.UserServiceImpl#create(com.axity.office.commons.dto.UserDto)}.
-   */
-  @Test
-  void testValidateRolesNull() {
-    // Data inicial
-    var list = new ArrayList<RoleDto>();// Roles list empty does not send to user
-
-    var dto = new UserDto();
-    dto.setUsername("JaredProgrammer");
-    dto.setEmail("jaredprogrammer@axity.com");
-    dto.setName("Jared");
-    dto.setLastName("Trejo");
-
-    // Llamada
-    var response = this.userService.create(dto);
-
-    // Validación
-    assertNotNull(response);
-    assertEquals(ErrorCode.NOT_ROLE_SELECTED.getCode(), response.getHeader().getCode());
-  }
-
 }

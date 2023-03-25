@@ -80,7 +80,7 @@ public interface UserService
    */
   boolean existRole(Integer id);
 
-  /**
+   /**
    * Method to validate if a role exist
    * 
    * @param id

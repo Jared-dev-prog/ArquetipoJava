@@ -150,14 +150,18 @@ public class UserServiceImpl implements UserService
       return genericResponse;
     }
 
+
     UserDO entity = new UserDO();
-    this.mapper.map(dto, entity);
+    this.mapper.map( dto, entity );
     entity.setId(null);
+
     var roles = new ArrayList<RoleDO>();
     entity.setRoles(roles);
+
     dto.getRoles().stream().forEach(r -> {
       entity.getRoles().add(this.rolePersistence.findById(r.getId()).get());
     });
+
     this.userPersistence.save(entity);
     dto.setId(entity.getId());
     return new GenericResponseDto<>(dto);
@@ -243,10 +247,13 @@ public class UserServiceImpl implements UserService
     return dto;
   }
 
+    /**
+   * 
+   * @param id
+   */
   @Override
   public boolean existRole(Integer id) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'existRole'");
+    return this.rolePersistence.findById(id).isPresent();
   }
 
 }
